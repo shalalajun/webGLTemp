@@ -12,15 +12,22 @@
     <canvas id="c" width="800" height="800"></canvas>
     <script src="https://webglfundamentals.org/webgl/resources/webgl-lessons-ui.js"></script>
     <script src="https://webglfundamentals.org/webgl/resources/m3.js"></script>
-    <div id="uiContainer">
-    <div id="ui">
-      <div id="x"></div>
-      <div id="y"></div>
-      <div id="angle"></div>
-      <div id="scaleX"></div>
-      <div id="scaleY"></div>
+    <div class="sliderBar">
+      <input type="range" min ="1" max="100" value="50" class="slider" id="myRange">
     </div>
+    
+    <div class="box redBox">
+      box
     </div>
+
+    <div class="box yellowBox locate">
+      box2
+    </div>
+
+    <div class="box blueBox">
+      box3
+    </div>
+  
     <!-- vertex shader -->
     <script  id="vertex-shader-2d" type="notjs">
         // attribute는 buffer에서 데이터를 받음

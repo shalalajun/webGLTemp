@@ -6,6 +6,78 @@ html {
   user-select: none;
 }
 
+
+.box{
+  width:100px;
+  height:100px;
+}
+
+.redBox{
+  background-color: red;
+}
+
+.yellowBox{
+  background-color: yellow;
+}
+
+
+.blueBox{
+  background-color: blue;
+}
+
+
+.locate{
+  /* position: relative; 상대적인 */
+  /* position: static; 고정 별로 쓸일은 없다 */
+  /* position: absolute; */
+  /* position: sticky;고정되었다가 스크롤 내리면 따라다닌다. */
+  position: fixed;/* 고정되어서 따라다닌다. */
+  left: 30px;
+  top:30px;
+}
+
+.sliderBar{
+  position: fixed;
+  top:30px;
+  left:90%;
+  width: 10%;
+}
+
+.slider{
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 100%;
+  height: 25px;
+  background: #d3d3d3;
+  outline: none;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: #04AA6D; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: #04AA6D; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+
 body {
   background-color: #aaa;
   font-family: Sans-Serif;
@@ -121,6 +193,7 @@ body.iframe {
 #ui {
     width: 200px;
 }
+
 
 @media (max-width: 390px) {
   pre {
