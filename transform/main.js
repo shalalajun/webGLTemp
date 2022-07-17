@@ -93,10 +93,11 @@ function main()
     
     setGeometry(gl);
 
-    var translation = [240,500];
+    var translation = [240,500]; // 위치변환하는 곳
+    
     drawScene();
 
-// ---------------
+// -----------------------------------------------------------------------------------------------여기까지가 실제 메인
 
 
     // Turn on the attribute 어트리뷰트 활성화
@@ -125,8 +126,8 @@ function main()
       //------
 
 
-      gl.uniform2f(u_location, gl.canvas.width, gl.canvas.height);
-      gl.uniform2fv(u_transLocation, translation);
+      gl.uniform2f(u_location, gl.canvas.width, gl.canvas.height); // set the resolution
+      gl.uniform2fv(u_transLocation, translation); // Set the translation.
     
       // 그리는 부분
       var primitiveType = gl.TRIANGLES;
@@ -138,56 +139,42 @@ function main()
     }
     
     
-    function setTriangle(x, y, bx, by)
-    {
-      var x1 = x + translation[0];
-      var x2 = bx;
-      var y1 = y + translation[1];
-      var y2 = by;
+    function setGeometry(gl) {
       gl.bufferData(
-        gl.ARRAY_BUFFER, 
+        gl.ARRAY_BUFFER,
         new Float32Array([
-          x1,y1,
-          x1,-y1,
-          x2,y2,
-        ]), 
-        gl.STATIC_DRAW);
+          // 왼쪽 열
+          0, 0,
+          30, 0,
+          0, 150,
+          0, 150,
+          30, 0,
+          30, 150,
+     
+          // 상단 가로 획
+          30, 0,
+          100, 0,
+          30, 30,
+          30, 30,
+          100, 0,
+          100, 30,
+     
+          // 중간 가로 획
+          30, 60,
+          67, 60,
+          30, 90,
+          30, 90,
+          67, 60,
+          67, 90,
+        ]),
+        gl.STATIC_DRAW
+      );
     }
 }
 
 main();
 
-function setGeometry(gl) {
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array([
-      // 왼쪽 열
-      0, 0,
-      30, 0,
-      0, 150,
-      0, 150,
-      30, 0,
-      30, 150,
- 
-      // 상단 가로 획
-      30, 0,
-      100, 0,
-      30, 30,
-      30, 30,
-      100, 0,
-      100, 30,
- 
-      // 중간 가로 획
-      30, 60,
-      67, 60,
-      30, 90,
-      30, 90,
-      67, 60,
-      67, 90,
-    ]),
-    gl.STATIC_DRAW
-  );
-}
+
 
 
 
