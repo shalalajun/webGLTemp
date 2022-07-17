@@ -85,50 +85,85 @@ function main()
 
     // 어트리뷰트등 속성을 넣기 위한 버퍼를 생성, 버퍼셋업
     var positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-    var positions = [
-        0, 0,
-        0, 0.5,
-        0.7, 0,
-    ];
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer); 
+    gl.clearColor(1.0,1.0,0.0,1.0);
 
 
+    var translation = [-0.05, 0.05];
+    var width = 100;
+    var height = 30;
+    var color = [Math.random(), Math.random(), Math.random(), 1];
 
-    resizeCanvasToDisplaySize(gl.canvas);
+    drawScene();
 
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height); // 뷰포트 사이즈 정하기
-    gl.clearColor(1.0,0.0,0.0,1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
-    gl.useProgram(program);
+// ---------------
 
 
     // Turn on the attribute 어트리뷰트 활성화
-    gl.enableVertexAttribArray(positionAttributeLocation);
-
-
-    //위치할당?
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-    // positionBuffer(ARRAY_BUFFER)의 데이터를 꺼내오는 방법을 속성에 지시
-    var size = 2; // 반복마다 2개의 컴포넌트 a_position = {x: 0, y: 0, z: 0, w: 0}와 같이 생각할 수 있습니다. 위에서 size = 2로 설정했는데요. 속성의 기본값은 0, 0, 0, 1이기 때문에 이 속성은 버퍼에서 처음 2개의 값(x/y)을 가져옵니다. z와 w는 기본값으로 각각 0과 1이 될 겁니다.
-    var type = gl.FLOAT; // 데이터는 부동소수점
-    var normalize = false; // 데이터 정규화 안함
-    var stride = 0; // 0 = 다음위치를 가져오기 위해 반복마다 size * size(type)만큼 앞으로 이동
-    var offset = 0; // 버퍼의 처음부터 시작
-
-    gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, offset);
-
-    var primitiveType = gl.TRIANGLES;
-    var offset = 0;
-    var count = 3;
-    gl.drawArrays(primitiveType, offset, count);
+    function drawScene()
+    {
+      resizeCanvasToDisplaySize(gl.canvas);
+     
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height); // 뷰포트 사이즈 정하기
+     
+      gl.clear(gl.COLOR_BUFFER_BIT);
     
+      gl.useProgram(program);
+    
+      gl.enableVertexAttribArray(positionAttributeLocation);
+      
+      //위치 버퍼 할당?
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
+      setTriangle(0, 0.2, 0.5, -0.4);
+    
+      // positionBuffer(ARRAY_BUFFER)의 데이터를 꺼내오는 방법을 속성에 지시
+      var size = 2; // 반복마다 2개의 컴포넌트 a_position = {x: 0, y: 0, z: 0, w: 0}와 같이 생각할 수 있습니다. 위에서 size = 2로 설정했는데요. 속성의 기본값은 0, 0, 0, 1이기 때문에 이 속성은 버퍼에서 처음 2개의 값(x/y)을 가져옵니다. z와 w는 기본값으로 각각 0과 1이 될 겁니다.
+      var type = gl.FLOAT; // 데이터는 부동소수점
+      var normalize = false; // 데이터 정규화 안함
+      var stride = 0; // 0 = 다음위치를 가져오기 위해 반복마다 size * size(type)만큼 앞으로 이동
+      var offset = 0; // 버퍼의 처음부터 시작
+    
+      gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, offset);
+    
+      var primitiveType = gl.TRIANGLES;
+      var offset = 0;
+      var count = 3;
+      gl.drawArrays(primitiveType, offset, count);
+    
+    
+    }
+    
+    
+    function setTriangle(x, y, bx, by)
+    {
+      var x1 = x + translation[0];
+      var x2 = bx;
+      var y1 = y + translation[1];
+      var y2 = by;
+      gl.bufferData(
+        gl.ARRAY_BUFFER, 
+        new Float32Array([
+          x1,y1,
+          x1,-y1,
+          x2,y2,
+        ]), 
+        gl.STATIC_DRAW);
+    }
 }
 
 main();
 
 
+
+
+
+
+
+
+
+
+var translation = [0,0];
+var width = 100;
+var height = 30;
+var color = [Math.random(), Math.random(), Math.random(), 1];
