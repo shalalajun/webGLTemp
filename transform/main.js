@@ -176,12 +176,6 @@ main();
 
 
 
-
-
-
-
-
-
 var translation = [0,0];
 var width = 100;
 var height = 30;
