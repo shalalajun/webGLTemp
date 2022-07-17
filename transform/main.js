@@ -82,18 +82,18 @@ function main()
     // 어트리뷰트, 유니폼 데이터 설정
     var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
     //gl.bindAttribLocation(program, 0, "a_position"); -> 필요없을까?
+    var u_location = gl.getUniformLocation(program, "u_location");
+    var u_transLocation = gl.getUniformLocation(program, "u_transLocation");
+
 
     // 어트리뷰트등 속성을 넣기 위한 버퍼를 생성, 버퍼셋업
     var positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer); 
     gl.clearColor(1.0,1.0,0.0,1.0);
+    
+    setGeometry(gl);
 
-
-    var translation = [-0.05, 0.05];
-    var width = 100;
-    var height = 30;
-    var color = [Math.random(), Math.random(), Math.random(), 1];
-
+    var translation = [240,500];
     drawScene();
 
 // ---------------
@@ -113,9 +113,7 @@ function main()
       gl.enableVertexAttribArray(positionAttributeLocation);
       
       //위치 버퍼 할당?
-      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-      setTriangle(0, 0.2, 0.5, -0.4);
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
     
       // positionBuffer(ARRAY_BUFFER)의 데이터를 꺼내오는 방법을 속성에 지시
       var size = 2; // 반복마다 2개의 컴포넌트 a_position = {x: 0, y: 0, z: 0, w: 0}와 같이 생각할 수 있습니다. 위에서 size = 2로 설정했는데요. 속성의 기본값은 0, 0, 0, 1이기 때문에 이 속성은 버퍼에서 처음 2개의 값(x/y)을 가져옵니다. z와 w는 기본값으로 각각 0과 1이 될 겁니다.
@@ -123,12 +121,17 @@ function main()
       var normalize = false; // 데이터 정규화 안함
       var stride = 0; // 0 = 다음위치를 가져오기 위해 반복마다 size * size(type)만큼 앞으로 이동
       var offset = 0; // 버퍼의 처음부터 시작
-    
       gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, offset);
+      //------
+
+
+      gl.uniform2f(u_location, gl.canvas.width, gl.canvas.height);
+      gl.uniform2fv(u_transLocation, translation);
     
+      // 그리는 부분
       var primitiveType = gl.TRIANGLES;
       var offset = 0;
-      var count = 3;
+      var count = 18;
       gl.drawArrays(primitiveType, offset, count);
     
     
@@ -154,8 +157,37 @@ function main()
 
 main();
 
-
-
+function setGeometry(gl) {
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array([
+      // 왼쪽 열
+      0, 0,
+      30, 0,
+      0, 150,
+      0, 150,
+      30, 0,
+      30, 150,
+ 
+      // 상단 가로 획
+      30, 0,
+      100, 0,
+      30, 30,
+      30, 30,
+      100, 0,
+      100, 30,
+ 
+      // 중간 가로 획
+      30, 60,
+      67, 60,
+      30, 90,
+      30, 90,
+      67, 60,
+      67, 90,
+    ]),
+    gl.STATIC_DRAW
+  );
+}
 
 
 
