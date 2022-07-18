@@ -132,7 +132,7 @@ function main()
       
       
             
-      //위치 버퍼 할당? -> 여러개의 버퍼를 사용할때는 바인트 버퍼를 사용해야 한다.
+      //위치 버퍼 할당? -> 여러개의 버퍼를 사용할때는 반드시 바인드 버퍼를 사용해야 한다.********/
       gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
       // positionBuffer(ARRAY_BUFFER)의 데이터를 꺼내오는 방법을 속성에 지시
       var size = 3; // 반복마다 2개의 컴포넌트 a_position = {x: 0, y: 0, z: 0, w: 0}와 같이 생각할 수 있습니다. 위에서 size = 2로 설정했는데요. 속성의 기본값은 0, 0, 0, 1이기 때문에 이 속성은 버퍼에서 처음 2개의 값(x/y)을 가져옵니다. z와 w는 기본값으로 각각 0과 1이 될 겁니다.
@@ -170,7 +170,10 @@ function main()
     m.multiply(tmpMatrix, mMatrix, mvpMatrix); //tmp 에 모델뷰를 곱해서 최종 mvp 행렬변화을 함
     gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
 
-    // 그리는 부분
+
+
+
+    // 실제로 그리는 부분
     var primitiveType = gl.TRIANGLES;
     var offset = 0;
     var count = 3;
