@@ -101,18 +101,9 @@ function main()
     gl.bindBuffer(gl.ARRAY_BUFFER,positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertex_position),gl.STATIC_DRAW);
     
-    
-
-
-
     var colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER,colorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertex_color),gl.STATIC_DRAW);
-
- 
-
-
-
 
     gl.clearColor(1.0,1.0,0.0,1.0);
 
@@ -193,10 +184,7 @@ function main()
     m.multiply(tmpMatrix, mMatrix, mvpMatrix);
 
     gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
-    var primitiveType = gl.TRIANGLES;
-    var offset = 0;
-    var count = 3;
-    gl.drawArrays(primitiveType, offset, count);
+    gl.drawArrays( gl.TRIANGLES, 0, 3);
     
 
 
