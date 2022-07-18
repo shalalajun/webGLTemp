@@ -82,8 +82,10 @@ function main()
     // 어트리뷰트, 유니폼 데이터 설정
     var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
     //gl.bindAttribLocation(program, 0, "a_position"); -> 필요없을까?
-    var u_location = gl.getUniformLocation(program, "u_location");
+    var u_location = gl.getUniformLocation(program, "u_resolution");
     var u_transLocation = gl.getUniformLocation(program, "u_transLocation");
+    var rotationLocation = gl.getUniformLocation(program,"u_rotation");
+    var scaleLocation = gl.getUniformLocation(program, "u_scale");
 
 
     // 어트리뷰트등 속성을 넣기 위한 버퍼를 생성, 버퍼셋업
@@ -93,11 +95,13 @@ function main()
     
     setGeometry(gl);
 
-    var translation = [240,500]; // 위치변환하는 곳
-    
+    var translation = [100,300]; // 위치변환하는 곳
+    var rotation = [0,1];// 회전하는 곳
+    var scale = [1,1];//스케일
+   
     drawScene();
 
-// -----------------------------------------------------------------------------------------------여기까지가 실제 메인
+// ------------------------------------------------------------------------여기까지가 실제 메인
 
 
     // Turn on the attribute 어트리뷰트 활성화
@@ -128,6 +132,8 @@ function main()
 
       gl.uniform2f(u_location, gl.canvas.width, gl.canvas.height); // set the resolution
       gl.uniform2fv(u_transLocation, translation); // Set the translation.
+      gl.uniform2fv(rotationLocation, rotation);
+      gl.uniform2fv(scaleLocation, scale);
     
       // 그리는 부분
       var primitiveType = gl.TRIANGLES;
