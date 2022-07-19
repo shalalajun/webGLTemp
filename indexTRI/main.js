@@ -51,8 +51,32 @@ function resizeCanvasToDisplaySize(canvas) {
     gl.deleteProgram(program);
   }
 
-  
+  function createVbo(gl,data){
+    var vbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    return vbo;
+  }
 
+  function setAttribute(gl, vbo, attLocation, attSize){
+    for(var i in vbo)
+    {
+      gl.bindBuffer(gl.ARRAY_BUFFER, vbo[i]);
+      gl.enableVertexAttribArray(attLocation[i]);
+      gl.vertexAttribPointer(attLocation[i], attSize[i], gl.FLOAT, false, 0, 0);
+
+      //  //위치 버퍼 할당? -> 여러개의 버퍼를 사용할때는 바인트 버퍼를 사용해야 한다.
+      //  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      //  // positionBuffer(ARRAY_BUFFER)의 데이터를 꺼내오는 방법을 속성에 지시
+      //  var size = 3; // 반복마다 2개의 컴포넌트 a_position = {x: 0, y: 0, z: 0, w: 0}와 같이 생각할 수 있습니다. 위에서 size = 2로 설정했는데요. 속성의 기본값은 0, 0, 0, 1이기 때문에 이 속성은 버퍼에서 처음 2개의 값(x/y)을 가져옵니다. z와 w는 기본값으로 각각 0과 1이 될 겁니다.
+      //  var type = gl.FLOAT; // 데이터는 부동소수점
+      //  var normalize = false; // 데이터 정규화 안함
+      //  var stride = 0; // 0 = 다음위치를 가져오기 위해 반복마다 size * size(type)만큼 앞으로 이동
+      //  var offset = 0; // 버퍼의 처음부터 시작
+      //  gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, offset);
+    }
+  }
 
   
 /**
@@ -79,13 +103,16 @@ function main()
 
     // 쉐이더를 만든 후 프로그램을 만들고 링크하기
     var program = createProgram(gl, vertexShader, fragmentShader);
-
+    gl.useProgram(program);
     
-    // 어트리뷰트, 유니폼 데이터 설정
-    var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-    var colorLocation = gl.getAttribLocation(program, "color");
-    var uniLocation = gl.getUniformLocation(program, "mvpMatrix");
 
+    var attLocation = new Array(2);
+    attLocation[0] = gl.getAttribLocation(program, 'a_position');
+    attLocation[1] = gl.getAttribLocation(program, 'color');
+    
+    var attSize = new Array(2);
+    attSize[0] = 3;
+    attSize[1] = 4;
    
     var vertex_position = [
       0.0, 1.0, 0.0,
@@ -105,34 +132,21 @@ function main()
       0, 1, 2,
       1, 2, 3
     ];
-  
-    var positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER,positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertex_position),gl.STATIC_DRAW);
     
-    var colorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER,colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertex_color),gl.STATIC_DRAW);
-
-    // gl.bindAttribLocation(program, 0, "a_position");
-    // gl.bindAttribLocation(program, 1, "color");
   
-    gl.useProgram(program);
-  
-    gl.enableVertexAttribArray(positionAttributeLocation);
-    gl.enableVertexAttribArray(colorLocation);
+    var positionBuffer = createVbo(gl,vertex_position);
+    var colorBuffer = createVbo(gl,vertex_color);
 
-    //위치 버퍼 할당? -> 여러개의 버퍼를 사용할때는 바인트 버퍼를 사용해야 한다.
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
-    //--------------------------------------
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);//다른 버퍼를 사용하기 때문에 반드시 다시 바인드버퍼를 써주어야 한다.
-    gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 0, 0);
+    setAttribute(gl,[positionBuffer, colorBuffer], attLocation, attSize);
 
+    // 인덱스버퍼를 만드는곳 엘리먼트 어레이 버퍼를 사용한다.
     var ibo = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Int16Array(index), gl.STATIC_DRAW);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+    //------------------------------------------
+
+    var uniLocation = gl.getUniformLocation(program, "mvpMatrix");
 
     var m = new matIV();
     //행열 초기화
@@ -145,8 +159,6 @@ function main()
     m.lookAt([0.0, 0.0, 5.0], [0, 0, 0], [0, 1, 0], vMatrix);
     m.perspective(45, c.width / c.height, 0.1, 100, pMatrix);
     m.multiply(pMatrix, vMatrix, tmpMatrix);
-
-
 
     drawScene();
 
