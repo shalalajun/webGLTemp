@@ -226,30 +226,41 @@ function main()
     attStride[1] = 3;
     attStride[2] = 4;
 
-    var torusData = torus(64, 64, 1.5, 3.0);
+    var sphereData = sphere(64, 64, 2.0, [0.25, 0.25, 0.75, 1.0]);
+    var sPositon = createVbo(gl, sphereData.p);
+    var sNormal = createVbo(gl, sphereData.n);
+    var sColor = createVbo(gl, sphereData.c);
+    var sIndex = create_ibo(gl,sphereData.i)
+    var sIbo = create_ibo(gl,sIndex);
+    
+
+
+
+    var torusData = torus(64, 64, 0.5, 1.5);
     var position = torusData.p;
     var normal = torusData.n;
     var color = torusData.c;
-    var index = torusData.i;
+    var tIndex = torusData.i;
     
   
     var positionBuffer = createVbo(gl,position);
     var normalBuffer = createVbo(gl,normal);
     var colorBuffer = createVbo(gl,color);
 
-    setAttribute(gl,[positionBuffer, normalBuffer, colorBuffer], attLocation, attStride);
+   
 
     // 인덱스버퍼를 만드는곳 엘리먼트 어레이 버퍼를 사용한다.
-    var ibo = create_ibo(gl,index);
+    var ibo = create_ibo(gl,tIndex);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
     //------------------------------------------
 
     var uniLocation = new Array();
     uniLocation[0] = gl.getUniformLocation(program, "mvpMatrix");
-    uniLocation[1] = gl.getUniformLocation(program, "invMatrix");
-    uniLocation[2] = gl.getUniformLocation(program, "lightDirection");
-    uniLocation[3] = gl.getUniformLocation(program, "ambientColor");
-    uniLocation[4] = gl.getUniformLocation(program, "eyeDirection");
+    uniLocation[1] = gl.getUniformLocation(program, "mMatrix");
+    uniLocation[2] = gl.getUniformLocation(program, "invMatrix");
+    uniLocation[3] = gl.getUniformLocation(program, "lightPosition");
+    uniLocation[4] = gl.getUniformLocation(program, "ambientColor");
+    uniLocation[5] = gl.getUniformLocation(program, "eyeDirection");
 
     var m = new matIV();
     //행열 초기화
@@ -297,18 +308,35 @@ function main()
       m.identity(mMatrix);
       m.rotate(mMatrix, rad, [1, 1, 0], mMatrix);
       m.multiply(tmpMatrix, mMatrix, mvpMatrix);
-
       m.inverse(mMatrix, invMatrix);
+
+      setAttribute(gl,[positionBuffer, normalBuffer, colorBuffer], attLocation, attStride);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
 
       //유니폼(전역변수값)을 보내준다.
       gl.uniformMatrix4fv(uniLocation[0], false, mvpMatrix);
-      gl.uniformMatrix4fv(uniLocation[1], false, invMatrix);
-      gl.uniform3fv(uniLocation[2], lightDirection);
-      gl.uniform4fv(uniLocation[3], ambientLight);
-      gl.uniform3fv(uniLocation[4], eyeDirection);
+      gl.uniformMatrix4fv(uniLocation[1], false, mMatrix);
+      gl.uniformMatrix4fv(uniLocation[2], false, invMatrix);
 
-      gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
+      gl.uniform3fv(uniLocation[3], lightDirection);
+      gl.uniform4fv(uniLocation[4], ambientLight);
+      gl.uniform3fv(uniLocation[5], eyeDirection);
+      gl.drawElements(gl.TRIANGLES, tIndex.length, gl.UNSIGNED_SHORT, 0);
 
+      // 다른 도형을 그리기때문에 바인드 버퍼를쓰는것 같다.
+
+      setAttribute(gl,[sPositon, sNormal, sColor], attLocation, attStride);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sIndex);
+
+      m.identity(mMatrix);
+      m.translate(mMatrix, [-7, 1, 1], mMatrix);
+      m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+      m.inverse(mMatrix, invMatrix);
+        
+      gl.uniformMatrix4fv(uniLocation[0], false, mvpMatrix);
+      gl.uniformMatrix4fv(uniLocation[1], false, mMatrix);
+      gl.uniformMatrix4fv(uniLocation[2], false, invMatrix);
+      gl.drawElements(gl.TRIANGLES, sphereData.i.length, gl.UNSIGNED_SHORT, 0);
 
       requestAnimationFrame(drawScene);
     
