@@ -78,39 +78,19 @@ function resizeCanvasToDisplaySize(canvas) {
 
 
 
-  // function createShader(gl, type, source) {
-  //   var shader = gl.createShader(type);
-  //   gl.shaderSource(shader, source);
-  //   gl.compileShader(shader);
-  //   var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
-  //   if (success) {
-  //     return shader;
-  //   }
+  function createShader(gl, type, source) {
+    var shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+    if (success) {
+      return shader;
+    }
   
-  //   console.log(gl.getShaderInfoLog(shader));
-  //   gl.deleteShader(shader);
-  // }
-  
-  function createShader(gl,id){
-	
-		var shader;
-		var scriptElement = document.getElementById(id);
-		
-		if(!scriptElement){return;}
-	
-		switch(scriptElement.type){
-			
-			case 'x-shader/x-vertex':
-				shader = gl.createShader(gl.VERTEX_SHADER);
-				break;
-		
-			case 'x-shader/x-fragment':
-				shader = gl.createShader(gl.FRAGMENT_SHADER);
-				break;
-			default :
-				return;
-		}
+    console.log(gl.getShaderInfoLog(shader));
+    gl.deleteShader(shader);
   }
+  
 
   function createProgram(gl, vertexShader, fragmentShader) {
     var program = gl.createProgram();
@@ -184,10 +164,17 @@ function main()
       return;
     }
     // 쉐이더 소스를 불러옴 뒤에 텍스트를 붙이네?.... 중요
-   
+
+    var checkCulling = document.getElementById("cull");
+    var checkFront = document.getElementById("front");
+    var checkDepth = document.getElementById("depth");
+
+    var vertexShaderSource = document.querySelector("#vertex-shader-2d").text;
+    var fragmentShaderSource = document.querySelector("#fragment-shader-2d").text;
+
     // 쉐이더를 만듬
-    var vertexShader = createShader(gl,'vs');
-    var fragmentShader = createShader(gl,'fs');
+    var vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
 
 
     // 쉐이더를 만든 후 프로그램을 만들고 링크하기
@@ -198,7 +185,7 @@ function main()
     var attLocation = new Array();
     attLocation[0] = gl.getAttribLocation(program, 'position');
     attLocation[1] = gl.getAttribLocation(program, 'normal');
-    attLocation[2] = gl.getAttribLocation(program, 'color');  
+    attLocation[2] = gl.getAttribLocation(program, 'color');
     
     var attStride = new Array();
     attStride[0] = 3;
@@ -211,7 +198,6 @@ function main()
     var color = torusData.c;
     var index = torusData.i;
     
-    console.log(normal);
   
     var positionBuffer = createVbo(gl,position);
     var normalBuffer = createVbo(gl,normal);
@@ -227,12 +213,9 @@ function main()
     var uniLocation = new Array();
     uniLocation[0] = gl.getUniformLocation(program, "mvpMatrix");
     uniLocation[1] = gl.getUniformLocation(program, "invMatrix");
-    uniLocation[2] = gl.getUniformLocation(program, "lightPosition");
-    uniLocation[3] = gl.getUniformLocation(program, "eyeDirection");
-    uniLocation[4] = gl.getUniformLocation(program, "ambientColor");
-   
-
-   
+    uniLocation[2] = gl.getUniformLocation(program, "lightDirection");
+    uniLocation[3] = gl.getUniformLocation(program, "ambientColor");
+    uniLocation[4] = gl.getUniformLocation(program, "eyeDirection");
 
     var m = new matIV();
     //행열 초기화
@@ -242,16 +225,14 @@ function main()
     var tmpMatrix = m.identity(m.create());
     var mvpMatrix = m.identity(m.create());
     var invMatrix = m.identity(m.create());
-
-    var lightDirection = [-0.5, 1.0, 0.5];
-    var ambientColor = [0.1, 0.1, 0.1, 1.0];
-    var eyeDirection = [0.0, 0.0, 20.0];
   
-    m.lookAt(eyeDirection, [0, 0, 0], [0, 1, 0], vMatrix);
+    m.lookAt([0.0, 0.0, 20.0], [0, 0, 0], [0, 1, 0], vMatrix);
     m.perspective(45, c.width / c.height, 0.1, 100, pMatrix);
     m.multiply(pMatrix, vMatrix, tmpMatrix);
 
-   
+    var lightDirection = [-0.5, 0.5, 0.5];
+    var ambientLight = [0.1, 0.1, 0.1, 1.0];
+    var eyeDirection = [0.0, 0.0, 20.0];
 
     drawScene();
 
@@ -270,17 +251,17 @@ function main()
 
       gl.clearColor(0.0, 0.0, 0.0, 1.0);
       gl.clearDepth(1.0);
-      //gl.viewport(0, 0, gl.canvas.width, gl.canvas.height); // 뷰포트 사이즈 정하기
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height); // 뷰포트 사이즈 정하기
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
       count ++
      
       var rad = (count % 360) * Math.PI / 180;
-      // var x = Math.cos(rad) * 1.5;
-		  // var z = Math.sin(rad) * 1.5;
+      var x = Math.cos(rad) * 1.5;
+		  var z = Math.sin(rad) * 1.5;
       //모델변환 좌표생성
       m.identity(mMatrix);
-      m.rotate(mMatrix, rad, [0, 1, 1], mMatrix);
+      m.rotate(mMatrix, rad, [1, 1, 0], mMatrix);
       m.multiply(tmpMatrix, mMatrix, mvpMatrix);
 
       m.inverse(mMatrix, invMatrix);
@@ -289,13 +270,11 @@ function main()
       gl.uniformMatrix4fv(uniLocation[0], false, mvpMatrix);
       gl.uniformMatrix4fv(uniLocation[1], false, invMatrix);
       gl.uniform3fv(uniLocation[2], lightDirection);
-      gl.uniform3fv(uniLocation[3], eyeDirection);
-      gl.uniform4fv(uniLocation[4], ambientColor);
-   
+      gl.uniform4fv(uniLocation[3], ambientLight);
+      gl.uniform3fv(uniLocation[4], eyeDirection);
 
       gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
 
-      gl.flush();
 
       requestAnimationFrame(drawScene);
     
@@ -309,12 +288,11 @@ function main()
 function setGeometry(gl) {
 
  
+
+ 
+
+ 
 }
-
-
-// HSVカラー取得用関数
-
-
 
 main();
 

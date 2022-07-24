@@ -209,8 +209,8 @@ function main()
     var uniLocation = new Array();
     uniLocation[0] = gl.getUniformLocation(program, "mvpMatrix");
     uniLocation[1] = gl.getUniformLocation(program, "invMatrix");
-    uniLocation[2] = gl.getUniformLocation(program, "lightPosition");
-    uniLocation[3] = gl.getUniformLocation(program, "ambientLight");
+    uniLocation[2] = gl.getUniformLocation(program, "lightDirection");
+    uniLocation[3] = gl.getUniformLocation(program, "ambientColor");
     uniLocation[4] = gl.getUniformLocation(program, "eyeDirection");
 
     var m = new matIV();
@@ -227,7 +227,7 @@ function main()
     m.multiply(pMatrix, vMatrix, tmpMatrix);
 
     var lightDirection = [-0.5, 0.5, 0.5];
-    var ambientLight = [0.1, 0.0, 0.1, 1.0];
+    var ambientLight = [0.1, 0.1, 0.1, 1.0];
     var eyeDirection = [0.0, 0.0, 20.0];
 
     drawScene();
