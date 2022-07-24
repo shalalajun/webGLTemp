@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pointLight</title>
+    <!-- <link rel="stylesheet" href="main.css"> -->
+</head>
+<body>
+    <canvas id="c" width="500" height="300"></canvas>  
+    <script  id="vertex-shader-2d" type="notjs">
+        
+
+        attribute vec3 position;
+        attribute vec3 normal;
+        attribute vec4 color;
+
+        uniform   mat4 mvpMatrix;
+        uniform   mat4 mMatrix;
+
+        varying   vec3 vPosition;
+        varying   vec3 vNormal;
+        varying   vec4 vColor;
+
+        void main(void){
+       
+           vPosition = (mMatrix * vec4(position, 1.0)).xyz;
+           vNormal = normal;
+           vColor = color;
+
+           gl_Position    = mvpMatrix * vec4(position, 1.0);
+           
+        }
+    </script>
+
+   <script  id="fragment-shader-2d" type="notjs">
+    precision mediump float;
+
+    
+    uniform   mat4 invMatrix;
+    uniform   vec3 lightPosition;
+    uniform   vec3 eyeDirection;
+    uniform   vec4 ambientColor;
+
+    varying   vec3 vPosition;
+    varying   vec3 vNormal;
+    varying   vec4 vColor;
+
+    void main()
+    {
+
+        vec3  lightVec = lightPosition - vPosition;
+        vec3  invLight = normalize(invMatrix * vec4(lightVec, 0.0)).xyz;
+        vec3  invEye   = normalize(invMatrix * vec4(eyeDirection, 0.0)).xyz;
+        vec3  halfLE   = normalize(invLight + invEye);
+        float diffuse  = clamp(dot(vNormal, invLight), 0.0, 1.0);
+        float specular = pow(clamp(dot(vNormal, halfLE), 0.0, 1.0), 50.0);
+        vec4  light    = vColor * vec4(vec3(diffuse), 1.0) + vec4(vec3(specular), 1.0);
+        vec4  final    = light + ambientColor;
+
+        gl_FragColor = final;
+    }
+    </script>
+    <script src="https://wgld.org/j/minMatrix.js" type="text/javascript"></script>
+    <script type="text/javascript" src="main.js"></script>
+    
+</body>
+</html>
