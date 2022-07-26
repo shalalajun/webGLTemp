@@ -199,9 +199,8 @@ function main()
     }
     // 쉐이더 소스를 불러옴 뒤에 텍스트를 붙이네?.... 중요
 
-    var checkCulling = document.getElementById("cull");
-    var checkFront = document.getElementById("front");
-    var checkDepth = document.getElementById("depth");
+    var checkAmbient = document.getElementById("ambient");
+    var checkRed = document.getElementById("red");
 
     var vertexShaderSource = document.querySelector("#vertex-shader-2d").text;
     var fragmentShaderSource = document.querySelector("#fragment-shader-2d").text;
@@ -226,7 +225,9 @@ function main()
     attStride[1] = 3;
     attStride[2] = 4;
 
-    var sphereData = sphere(64, 64, 2.0, [0.25, 0.25, 0.75, 1.0]);
+    
+    var sphereColor = [0.25, 0.25, 0.75, 1.0];
+    var sphereData = sphere(64, 64, 2.0, sphereColor);
     var sPositon = createVbo(gl, sphereData.p);
     var sNormal = createVbo(gl, sphereData.n);
     var sColor = createVbo(gl, sphereData.c);
@@ -234,24 +235,6 @@ function main()
     var sIbo = create_ibo(gl,sIndex);
     
 
-
-
-    var torusData = torus(64, 64, 0.5, 1.5);
-    var position = torusData.p;
-    var normal = torusData.n;
-    var color = torusData.c;
-    var tIndex = torusData.i;
-    
-  
-    var positionBuffer = createVbo(gl,position);
-    var normalBuffer = createVbo(gl,normal);
-    var colorBuffer = createVbo(gl,color);
-
-   
-
-    // 인덱스버퍼를 만드는곳 엘리먼트 어레이 버퍼를 사용한다.
-    var ibo = create_ibo(gl,tIndex);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
     //------------------------------------------
 
     var uniLocation = new Array();
@@ -261,6 +244,8 @@ function main()
     uniLocation[3] = gl.getUniformLocation(program, "lightPosition");
     uniLocation[4] = gl.getUniformLocation(program, "ambientColor");
     uniLocation[5] = gl.getUniformLocation(program, "eyeDirection");
+    uniLocation[6] = gl.getUniformLocation(program, "materialColor");
+
 
     var m = new matIV();
     //행열 초기화
@@ -276,8 +261,9 @@ function main()
     m.multiply(pMatrix, vMatrix, tmpMatrix);
 
     var lightDirection = [-0.5, 0.5, 0.5];
-    var ambientLight = [0.1, 0.1, 0.1, 1.0];
+    var ambientLight;
     var eyeDirection = [0.0, 0.0, 20.0];
+    var materialColor;
 
     drawScene();
 
@@ -291,6 +277,22 @@ function main()
     // Turn on the attribute 어트리뷰트 활성화
     function drawScene()
     {
+
+
+      if(checkAmbient.checked)
+      {
+        ambientLight = [0.2, 0.2, 0.5, 1.0];
+      }else{
+        ambientLight = [0.1, 0.1, 0.1, 1.0];
+      }
+
+      if(checkRed.checked)
+      {
+        materialColor = [1.0,0.0,0.0,1.0];
+      }else {
+        materialColor = [1.0,0.0,1.0,1.0];
+      }
+
 
       // resizeCanvasToDisplaySize(gl.canvas);
 
@@ -324,6 +326,7 @@ function main()
       gl.uniform3fv(uniLocation[3], lightDirection);
       gl.uniform4fv(uniLocation[4], ambientLight);
       gl.uniform3fv(uniLocation[5], eyeDirection);
+      gl.uniform4fv(uniLocation[6], materialColor);
       
       gl.drawElements(gl.TRIANGLES, sphereData.i.length, gl.UNSIGNED_SHORT, 0);
 

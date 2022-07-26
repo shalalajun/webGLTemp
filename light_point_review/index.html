@@ -9,6 +9,12 @@
 </head>
 <body>
     <canvas id="c" width="500" height="300"></canvas>  
+    <p>
+        <input id="ambient" type="checkbox">amibient
+    </p>
+    <p>
+        <input id = "red" type="checkbox"> Red
+    </p>
     <script  id="vertex-shader-2d" type="notjs">
         
 
@@ -42,6 +48,7 @@
     uniform   vec3 lightPosition;
     uniform   vec3 eyeDirection;
     uniform   vec4 ambientColor;
+    uniform   vec4 materialColor;
 
     varying   vec3 vPosition;
     varying   vec3 vNormal;
@@ -56,12 +63,13 @@
         vec3  halfLE   = normalize(invLight + invEye);
         float diffuse  = clamp(dot(vNormal, invLight), 0.0, 1.0);
         float specular = pow(clamp(dot(vNormal, halfLE), 0.0, 1.0), 50.0);
-        vec4  light    = vColor * vec4(vec3(diffuse), 1.0) + vec4(vec3(specular), 1.0);
+        vec4  light    = materialColor * vec4(vec3(diffuse), 1.0) + vec4(vec3(specular), 1.0);
         vec4  final    = light + ambientColor;
 
         gl_FragColor = final;
     }
     </script>
+    
     <script src="https://wgld.org/j/minMatrix.js" type="text/javascript"></script>
     <script type="text/javascript" src="main.js"></script>
     
