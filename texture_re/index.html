@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <link rel="stylesheet" href="main.css"> -->
+</head>
+<body>
+    <canvas id="c" width="500" height = "300"></canvas>
+    <script id="vertexShader" type="x-shader/x-vertex">
+        attribute vec4 position;
+        attribute vec4 color;
+
+        uniform mat4 mvpMatrix;
+
+        varying vec4 vColor;
+
+        void main(){
+            vColor = color;
+            gl_Position = mvpMatrix * vec4(position, 1.0);
+        }
+    </script>
+    <script id="fragmentShader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec4 vColor;
+
+        void main()
+        {
+            gl_FragColor = vColor;
+        }
+
+    </script>
+    <script type="text/javaScript" src="main.js"></script>
+</body>
+</html>
