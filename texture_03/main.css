@@ -1,0 +1,12 @@
+  /*  */
+   body {
+    height: 100%;
+    margin: 0;
+    /* background-color: black; */
+  }
+  /* 캔버스가 컨테이너를 채우도록 만들기 */
+  canvas {
+    width: 100vw;
+    height: 100vh;
+    display: block;
+  }
