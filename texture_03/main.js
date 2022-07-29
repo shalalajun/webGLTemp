@@ -1,7 +1,22 @@
 "use strict";
 
 
+  function createTexture(gl, source, texture)
+  {
+    var img = new Image();
 
+    img.onload = function()
+    {
+      var tex = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.bindTexture(gl.TEXTURE_2D,null);
+
+      texture = tex;
+    }
+    img.src = source;
+  }
 
 
   function createShader(gl, type, source) {
@@ -88,16 +103,19 @@ function main()
     var program = createProgram(gl, vertexShader, fragmentShader);
     gl.useProgram(program);
 
-
-    var uniLocation = gl.getUniformLocation(program, "mvpMatrix");
+    var uniLocation = new Array();
+    uniLocation[0] = gl.getUniformLocation(program, "mvpMatrix");
+    uniLocation[1] = gl.getUniformLocation(program, "texture");
 
     var attLocation = new Array();
     attLocation[0] = gl.getAttribLocation(program,"position");
     attLocation[1] = gl.getAttribLocation(program,"color");
+    attLocation[2] = gl.getAttribLocation(program,"textureCoord");
 
     var attSize = new Array();
     attSize[0] = 3;
     attSize[1] = 4;
+    attSize[2] = 2;
 
    
 
@@ -116,19 +134,29 @@ function main()
     ]; 
 
 
+    var textureCoord = [
+      0.0, 0.0,
+      1.0, 0.0,
+      0.0, 1.0,
+      1.0, 1.0
+  ];
+
+
     var index = [
         0, 1, 2,
-        1, 2, 3
+        3, 2, 1
     ];
       
 
     var positionBuffer = createVbo(gl,positions);
     var colorBuffer = createVbo(gl,vertex_color);
+    var textureBuffer = createVbo(gl,textureCoord);
   
     gl.enableVertexAttribArray( attLocation[0]);
     gl.enableVertexAttribArray( attLocation[1]);
+    gl.enableVertexAttribArray( attLocation[2]);
 
-    setAttribute(gl,[positionBuffer, colorBuffer], attLocation, attSize);
+    setAttribute(gl,[positionBuffer, colorBuffer, textureBuffer], attLocation, attSize);
 
 
     var ibo = gl.createBuffer();
@@ -148,7 +176,10 @@ function main()
     //프로젝션메트릭스 (원금감 및 클립핑)
     m.perspective(50, canvas.width / canvas.height, 0.1, 100, pMatrix);
     m.multiply(pMatrix, vMatrix, tmpMatrix);//tmp매트릭스에 미리 뷰 x 프로젝션 좌표변화을 해둠
-
+   
+    gl.activeTexture(gl.TEXTURE0);
+    var texture;
+    createTexture(gl,'texture.png', texture);
     
     drawScene();
 
@@ -159,21 +190,29 @@ function main()
         gl.clearColor(1.0,1.0,0.0,1.0);
         gl.clearDepth(1.0);
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height); // 뷰포트 사이즈 정하기
-        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         count++;
 
         
         var rad = (count % 360) * Math.PI / 180;
+
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.uniform1i(uniLocation[1], 0);
+
         //첫번째 모델 좌표변환 원궤도 그리기
         var x = Math.cos(rad)*1;
         var y = Math.sin(rad)*1;
         m.identity(mMatrix);
         m.translate(mMatrix,[x, y + 1.0, 0.0], mMatrix);
         
+        
         //첫번째 mvp 행렬변환
         m.multiply(tmpMatrix, mMatrix, mvpMatrix); //tmp 에 모델뷰를 곱해서 최종 mvp 행렬변화을 함
-        gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
+
+       
+        
+        gl.uniformMatrix4fv(uniLocation[0], false, mvpMatrix);
         gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
         requestAnimationFrame(drawScene);
 
