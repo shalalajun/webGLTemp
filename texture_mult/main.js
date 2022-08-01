@@ -88,7 +88,8 @@ function main()
 
     var uniLocation = new Array();
     uniLocation[0] = gl.getUniformLocation(program, "mvpMatrix");
-    uniLocation[1] = gl.getUniformLocation(program, "texture");
+    uniLocation[1] = gl.getUniformLocation(program, "texture0");
+    uniLocation[2] = gl.getUniformLocation(program, "texture1");
 
     var attLocation = new Array();
     attLocation[0] = gl.getAttribLocation(program,"position");
@@ -160,9 +161,11 @@ function main()
     m.perspective(50, canvas.width / canvas.height, 0.1, 100, pMatrix);
     m.multiply(pMatrix, vMatrix, tmpMatrix);//tmp매트릭스에 미리 뷰 x 프로젝션 좌표변화을 해둠
    
-    gl.activeTexture(gl.TEXTURE0);
-    var texture = null;
-    createTexture(gl,'texture.png');
+
+    var texture0 = null;
+    var texture1 = null;
+    createTexture(gl,'texture0.png',0);
+    createTexture(gl,'texture1.png',1);
     
     drawScene();
 
@@ -180,8 +183,13 @@ function main()
         
         var rad = (count % 360) * Math.PI / 180;
 
-        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, texture0);
         gl.uniform1i(uniLocation[1], 0);
+
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, texture1);
+        gl.uniform1i(uniLocation[2], 1);
 
         //첫번째 모델 좌표변환 원궤도 그리기
         var x = Math.cos(rad)*1;
@@ -191,10 +199,7 @@ function main()
         
         
         //첫번째 mvp 행렬변환
-        m.multiply(tmpMatrix, mMatrix, mvpMatrix); //tmp 에 모델뷰를 곱해서 최종 mvp 행렬변화을 함
-
-       
-        
+        m.multiply(tmpMatrix, mMatrix, mvpMatrix); //tmp 에 모델뷰를 곱해서 최종 mvp 행렬변화을 함        
         gl.uniformMatrix4fv(uniLocation[0], false, mvpMatrix);
         gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
         requestAnimationFrame(drawScene);
@@ -202,7 +207,7 @@ function main()
     }
 
 
-    function createTexture(gl, source)
+    function createTexture(gl, source, number)
     {
       var img = new Image();
   
@@ -214,7 +219,20 @@ function main()
         gl.generateMipmap(gl.TEXTURE_2D);
         gl.bindTexture(gl.TEXTURE_2D,null);
 
-        texture = tex;
+        switch(number)
+        {
+          case 0:
+            texture0 = tex;
+            break;
+          
+            case 1:
+            texture1 = tex;
+            break;
+
+            default:
+            break;
+        }
+     
       }
       img.src = source;
     }
