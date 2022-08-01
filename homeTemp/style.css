@@ -1,0 +1,42 @@
+body
+{
+    margin:0px;
+    font-family: spotify-circular, Helvetica, Arial, sans-serif;
+}
+a{
+    text-decoration: none;
+    font-weight: 700;
+}
+
+/* a:-webkit-any-link {
+    color: -webkit-link;
+    cursor: pointer;
+    text-decoration: underline;
+} */
+a.nav-item{
+    color: white;
+    font-size: 16px;
+  
+}
+.nav{
+    height:80px;
+    align-items: center;
+    display: flex;
+    justify-content: space-around;
+    background-color: black;
+}
+.nav-item{
+    padding: 28px 17px;
+}
+.main{
+    height:969px;
+    background-color: rgb(41, 65, 171);
+}
+
+.footer{
+    height: 530px;
+    background-color: black;
+}
+
+
+
