@@ -1,0 +1,93 @@
+body{
+    margin: 0px;
+    font-family: spotify-circular, Helvetica, Arial, sans-serif;
+    color: white;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover{
+    color: #1ed760;
+}
+
+nav{
+    height: 80px;
+    background-color: black;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+main{
+    height: 969px;
+    background-color: rgb(41, 65, 171);
+    background-image: url(https://www-growth.scdn.co/static/home/bursts.svg);
+    background-size: 175%;
+    background-position: 46% 4%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+footer{
+    height: 530px;
+    background-color: black;
+}
+
+.nav-item{
+    padding: 28px 17px;
+    font-weight: 700;
+}
+
+
+.main-container{
+    /* border: 1px solid red; 보더를 설정해두고 작업하면 기준잡기가 쉽다. */
+   
+}
+
+.headline{
+    font-size: 146px;
+    line-height: 166px;
+    color: #1ed760;
+    font-weight: 900;
+    position: relative;
+    left: 225px;
+    padding-bottom: 40px;
+}
+
+.headline-first{
+    position: relative;
+    left: -2.5em;
+    
+}
+/* em 이란 글씨체 기준이다 그렇다면 현재 1em 은 146px 이다. 또한 모바일등 사이즈가 작아지는 반응형에서는 너무 편리하다.*/
+
+.sub-headline{
+    color: #1ed760;
+    text-align: center; /*박스안에 텍스트만 가운데로 정렬할때 쓴다.*/
+    font-size: 18px;
+    padding-bottom: 40px;
+}
+
+
+.button-area{
+    text-align: center;
+   
+}
+
+.button-style{
+    padding: 14px 32px;
+    border-radius: 500px;
+    background-color: #1ed760;
+    color: #2941ab;
+    font-weight: 700;
+    border: none;
+    font-size: inherit;
+}
+
+.button-style:hover{
+    transform: scale(1.2);
+}
