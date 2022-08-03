@@ -61,6 +61,9 @@ function resizeCanvasToDisplaySize(canvas) {
 function main()
 {
     var canvas = document.querySelector("#c");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
     var gl = canvas.getContext("webgl");
     if (!gl) {
       return;
@@ -83,6 +86,7 @@ function main()
     var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
     var colorLocation = gl.getAttribLocation(program, "color");
     var uniLocation = gl.getUniformLocation(program, "mvpMatrix");
+    var resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
 
    
     var vertex_position = [
@@ -105,7 +109,7 @@ function main()
     gl.bindBuffer(gl.ARRAY_BUFFER,colorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertex_color),gl.STATIC_DRAW);
 
-    gl.clearColor(1.0,1.0,0.0,1.0);
+    gl.clearColor(0.0,0.0,0.0,0.0);
 
     drawScene();
 
@@ -115,9 +119,10 @@ function main()
     // Turn on the attribute 어트리뷰트 활성화
     function drawScene()
     {
-      // resizeCanvasToDisplaySize(gl.canvas);
+      
+      resizeCanvasToDisplaySize(canvas);
      
-      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height); // 뷰포트 사이즈 정하기
+      gl.viewport(0, 0, canvas.width, canvas.height); // 뷰포트 사이즈 정하기
      
       gl.clear(gl.COLOR_BUFFER_BIT);
 
@@ -150,6 +155,7 @@ function main()
       // --------------------------------------
 
 
+   
 
     var m = new matIV();
     //행열 초기화
@@ -168,7 +174,9 @@ function main()
     m.translate(mMatrix,[1.5,0.0,0.0],mMatrix);
     //첫번째 mvp 행렬변환
     m.multiply(tmpMatrix, mMatrix, mvpMatrix); //tmp 에 모델뷰를 곱해서 최종 mvp 행렬변화을 함
+    gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
     gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
+    
 
 
 
@@ -185,8 +193,10 @@ function main()
 
     // 모델 × 뷰 × 프로젝션 (두 번째 모델)
     m.multiply(tmpMatrix, mMatrix, mvpMatrix);
-
+    
+    gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
     gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
+   
     gl.drawArrays( gl.TRIANGLES, 0, 3);
     
 
