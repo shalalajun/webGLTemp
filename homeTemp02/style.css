@@ -87,3 +87,8 @@ footer{
 .button-style:hover{
     transform: scale(1.2);
 }
+
+.footerMain{
+    width: 1170px;
+   
+}
