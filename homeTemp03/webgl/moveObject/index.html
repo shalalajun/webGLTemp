@@ -5,19 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="style.css" type="text/css">
+    <link rel="stylesheet" href="../../style.css">
 </head>
 <body>
     <header>
         <nav class="dropmenu"><!-- 네비게이션 선언-->
          <ul>
-          <li><a href="./index.html">home</a>
+          <li><a href="../../index.html">home</a>
           <li><a href="#">menu1</a><!-- 상위메뉴-->
             <ul>
-                <li><a href="./webgl/indexTri/index.html">indexTri</a></li>
-                <li><a href="./webgl/drawTwoObject/index.html">drawTwo</a></li>
-                <li><a href="./webgl/moveObject/index.html">moveTri</a></li>
-         </ul>
+                <li><a href="../indexTRI/index.html">indexTri</a></li>
+                <li><a href="../drawTwoObject/index.html">drawTwo</a></li>
+                <li><a href="./index.html">moveTri</a></li>
+            </ul>
          </li>
           <li><a href="#">menu2</a><!-- 드롭다운할 상위메뉴-->
            <ul>
@@ -44,8 +44,33 @@
          </ul>
        </nav><!-- 네비게이션 종료 선언-->
        </header>
-       <div class="main">
-        welcom webGL
-       </div>
+    <canvas id="c" width="800" height="800"></canvas>
+    <script  id="vertex-shader-2d" type="notjs">
+        
+        attribute vec3 a_position;
+        attribute vec4 color;
+        uniform mat4 mvpMatrix;
+        varying vec4 vColor;
+   
+        
+        void main() {
+          
+          vColor = color;
+          gl_Position = mvpMatrix * vec4(a_position, 1.0);
+        }
+    </script>
+
+   <script  id="fragment-shader-2d" type="notjs">
+    precision mediump float;
+    varying vec4 vColor;
+
+    void main()
+    {
+        gl_FragColor = vColor;
+    }
+    </script>
+    <script src="https://wgld.org/j/minMatrix.js" type="text/javascript"></script>
+    <script type="text/javascript" src="main.js"></script>
+    
 </body>
 </html>
