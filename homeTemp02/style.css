@@ -35,6 +35,9 @@ main{
 footer{
     height: 530px;
     background-color: black;
+    display: flex;
+    justify-content: center;
+   
 }
 
 .nav-item{
@@ -87,3 +90,71 @@ footer{
 .button-style:hover{
     transform: scale(1.2);
 }
+
+
+
+.container{
+    width: 1170px;
+    padding-top: 80px;
+    padding-bottom: 50px;
+   
+}
+
+.footer-menu{
+   display: flex;
+   justify-content: space-between;
+   height: 346px;
+}
+
+.first-box{
+    width:60%;
+    border: solid 1px red;
+    display: flex;
+   justify-content: space-between;
+    
+}
+
+.second-box{
+    width: 40%;
+    border: solid 1px green;
+    display: flex;
+    justify-content: end;
+   
+}
+
+.column{
+    display: flex;
+    flex-direction: column;
+    padding: 0 15px;
+}
+
+.sub-title{
+    margin: 20px 0px;
+    color: #919496;
+    font-weight: 900;
+}
+
+.footer-menu-item{
+    padding-bottom: 15px;
+    padding-top: 3px;
+    font-size: 16px;
+  
+}
+
+.icon-box {
+    width: 54px;
+    height: 54px;
+    background-color: #222322;
+    border-radius: 50%;
+    margin-right: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .icon {
+    font-size: 24px;
+  }
+  .icon:hover {
+    color: #2de26d;
+  }
+  
