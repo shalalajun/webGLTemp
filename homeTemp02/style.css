@@ -108,7 +108,7 @@ footer{
 
 .first-box{
     width:60%;
-    border: solid 1px red;
+ 
     display: flex;
    justify-content: space-between;
     
@@ -116,7 +116,7 @@ footer{
 
 .second-box{
     width: 40%;
-    border: solid 1px green;
+
     display: flex;
     justify-content: end;
    
@@ -157,4 +157,21 @@ footer{
   .icon:hover {
     color: #2de26d;
   }
-  
+
+ .first-line{
+    display: flex;
+    justify-content: end;
+ }
+ .second-line{
+    color: #919496;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+}
+
+
+
+.second-line-item {
+    margin-right: 24px;
+    color: #919496;
+}
