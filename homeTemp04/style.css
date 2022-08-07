@@ -14,7 +14,7 @@
 .navbar {
   --bs-navbar-padding-x: 0;
   --bs-navbar-padding-y: 0.5rem;
-  --bs-navbar-color: rgba(0, 0, 0, 0.55);
+  --bs-navbar-color: white;
   --bs-navbar-hover-color: rgb(255,73,167);
   --bs-navbar-disabled-color: rgba(0, 0, 0, 0.3);
   --bs-navbar-active-color: rgb(251,231,61);
@@ -70,7 +70,6 @@ footer{
     --bs-dropdown-link-hover-bg: rgb(251,231,61);
     --bs-dropdown-link-color: rgb(14,24,50);
 }
-
 
 
 
