@@ -60,6 +60,7 @@ main{
 
 footer{
   height: 300px;
+  color: white;
   background-color: rgb(14,24,50);
 }
 
@@ -71,18 +72,18 @@ footer{
     --bs-dropdown-link-color: rgb(14,24,50);
 }
 
+.first-line{
+  border-bottom: 1px solid white;
+}
+
+.second-line a{
+  color: white;
+  text-decoration: none;
+}
 
 
-/* .dropdown-item {
-    display: block;
-    width: 100%;
-    padding: var(--bs-dropdown-item-padding-y) var(--bs-dropdown-item-padding-x);
-    clear: both;
-    font-weight: 400;
-    color: var(--bs-dropdown-link-color);
-    text-align: inherit;
-    text-decoration: none;
-    white-space: nowrap;
-    background-color: transparent;
-    border: 0;
-} */
+@media screen and (max-width:48rem){
+  .first-line{
+    text-align: center;
+  }
+}
