@@ -1,30 +1,30 @@
 // sample_096
 //
-// WebGLでVTFによるGPGPUパーティクル
+// WebGL에서 VTF에 의한 GPGPU 파티클
 
 window.onload = function(){
 	var i, j;
-	var run = true;           // アニメーション継続フラグ
-	var velocity = 0;         // パーティクルの加速度係数
-	var mouseFlag = false;    // マウス操作のフラグ
-	var mousePositionX = 0.0; // マウス座標X（-1.0 から 1.0）
-	var mousePositionY = 0.0; // マウス座標Y（-1.0 から 1.0）
+	var run = true;           // 애니메이션 지속 플래그
+	var velocity = 0;         // 파티클 가속도 계수
+	var mouseFlag = false;    // 마우스 조작 플래그
+	var mousePositionX = 0.0; // 마우스 좌표 X (-1.0에서 1.0)
+	var mousePositionY = 0.0; // 마우스 좌표 Y (-1.0에서 1.0)
 	
-	// canvasエレメントを取得
+	// canvas 엘리먼트 취득
 	c = document.getElementById('canvas');
 	c.width = Math.min(window.innerWidth, window.innerHeight);
 	c.height = c.width;
 	
-	// WebGLコンテキストの初期化
+	// WebGL 컨텍스트 초기화
 	var gl = c.getContext('webgl');
 	
-	// イベント登録
+	// 이벤트 등록
 	c.addEventListener('mousedown', mouseDown, true);
 	c.addEventListener('mouseup', mouseUp, true);
 	c.addEventListener('mousemove', mouseMove, true);
 	window.addEventListener('keydown', keyDown, true);
 	
-	// 頂点テクスチャフェッチが利用可能かどうかチェック
+	// 	꼭짓점 텍스처 페치 이용 가능 여부 체크
 	i = gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS);
 	if(i > 0){
 		console.log('max_vertex_texture_imaeg_unit: ' + i);
@@ -33,7 +33,7 @@ window.onload = function(){
 		return;
 	}
 	
-	// 浮動小数点数テクスチャが利用可能かどうかチェック
+	// 부동소수점수 텍스쳐 이용가능한지 체크
 	var ext;
 	ext = gl.getExtension('OES_texture_float') || gl.getExtension('OES_texture_half_float');
 	if(ext == null){
@@ -41,15 +41,15 @@ window.onload = function(){
 		return;
 	}
 	
-	// シェーダ用変数
+	// 셰이더용 변수
 	var v_shader, f_shader;
 	
-	// 頂点のレンダリングを行うシェーダ
+	// 꼭짓점을 렌더링하는 셰이더
 	v_shader = create_shader('point_vs');
 	f_shader = create_shader('point_fs');
 	var pPrg = create_program(v_shader, f_shader);
 	
-	// locationの初期化
+	// location 초기화
 	var pAttLocation = [];
 	pAttLocation[0] = gl.getAttribLocation(pPrg, 'index');
 	var pAttStride = [];
@@ -60,12 +60,12 @@ window.onload = function(){
 	pUniLocation[2] = gl.getUniformLocation(pPrg, 'pointScale');
 	pUniLocation[3] = gl.getUniformLocation(pPrg, 'ambient');
 	
-	// テクスチャへの描き込みを行うシェーダ
+	// 텍스쳐에 그려 넣는 셰이더
 	v_shader = create_shader('velocity_vs');
 	f_shader = create_shader('velocity_fs');
 	var vPrg = create_program(v_shader, f_shader);
 	
-	// locationの初期化
+	// location 초기화
 	var vAttLocation = [];
 	vAttLocation[0] = gl.getAttribLocation(vPrg, 'position');
 	var vAttStride = [];
@@ -77,12 +77,12 @@ window.onload = function(){
 	vUniLocation[3] = gl.getUniformLocation(vPrg, 'mouseFlag');
 	vUniLocation[4] = gl.getUniformLocation(vPrg, 'velocity');
 	
-	// テクスチャへの描き込みを行うシェーダ
+	// 텍스쳐에 그려 넣는 셰이더
 	v_shader = create_shader('default_vs');
 	f_shader = create_shader('default_fs');
 	var dPrg = create_program(v_shader, f_shader);
 	
-	// locationの初期化
+	//location 초기화
 	var dAttLocation = [];
 	dAttLocation[0] = gl.getAttribLocation(dPrg, 'position');
 	var dAttStride = [];
@@ -90,24 +90,24 @@ window.onload = function(){
 	var dUniLocation = [];
 	dUniLocation[0] = gl.getUniformLocation(dPrg, 'resolution');
 	
-	// テクスチャの幅と高さ
+	// 텍스쳐의 폭과 높이
 	var TEXTURE_WIDTH  = 512;
 	var TEXTURE_HEIGHT = 512;
 	var resolution = [TEXTURE_WIDTH, TEXTURE_HEIGHT];
 	
-	// 頂点
+	// 정점.
 	var vertices = new Array(TEXTURE_WIDTH * TEXTURE_HEIGHT);
 	
-	// 頂点のインデックスを連番で割り振る
+	// 꼭짓점의 인덱스를 연번으로 할당하다
 	for(i = 0, j = vertices.length; i < j; i++){
 		vertices[i] = i;
 	}
 	
-	// 頂点情報からVBO生成
+	// 정점 정보에서 VBO 생성
 	var vIndex = create_vbo(vertices);
 	var vVBOList = [vIndex];
 	
-	// 板ポリ
+	// 판 폴리
 	var position = [
 		-1.0,  1.0,  0.0,
 		-1.0, -1.0,  0.0,
@@ -117,63 +117,63 @@ window.onload = function(){
 	var vPlane = create_vbo(position);
 	var planeVBOList = [vPlane];
 	
-	// フレームバッファの生成
+	// 프레임 버퍼 생성
 	var backBuffer  = create_framebuffer(TEXTURE_WIDTH, TEXTURE_WIDTH, gl.FLOAT);
 	var frontBuffer = create_framebuffer(TEXTURE_WIDTH, TEXTURE_WIDTH, gl.FLOAT);
 	var flip = null;
 	
-	// フラグ
+	// 플래그.
 	gl.disable(gl.BLEND);
 	gl.blendFunc(gl.ONE, gl.ONE);
 	
-	// デフォルトの頂点情報を書き込む
+	// 디폴트의 정점 정보를 기입하다
 	(function(){
-		// フレームバッファをバインド
+		// 프레임 버퍼를 바인드
 		gl.bindFramebuffer(gl.FRAMEBUFFER, backBuffer.f);
 		
-		// ビューポートを設定
+		// 뷰포트 설정
 		gl.viewport(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		
-		// フレームバッファを初期化
+		// 프레임 버퍼 초기화
 		gl.clearColor(0.0, 0.0, 0.0, 0.0);
 		gl.clear(gl.COLOR_BUFFER_BIT);
 		
-		// プログラムオブジェクトの選択
+		// 프로그램 객체 선택
 		gl.useProgram(dPrg);
 		
-		// テクスチャへ頂点情報をレンダリング
+		//텍스처로 정점 정보를 렌더링
 		set_attribute(planeVBOList, dAttLocation, dAttStride);
 		gl.uniform2fv(dUniLocation[0], resolution);
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, position.length / 3);
 	})();
 	
-	// レンダリング関数の呼び出し
+	// 렌더링 함수 호출
 	var count = 0;
 	var ambient = [];
 	render();
 	
-	// 恒常ループ
+	// 항상 루프
 	function render(){
-		// ブレンドは無効化
+		// 블렌드는 무효화
 		gl.disable(gl.BLEND);
 		
-		// フレームバッファをバインド
+		// 프레임 버퍼를 바인드
 		gl.bindFramebuffer(gl.FRAMEBUFFER, frontBuffer.f);
 		
-		// ビューポートを設定
+		// 뷰포트 설정
 		gl.viewport(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		
-		// フレームバッファを初期化
+		// 프레임 버퍼 초기화
 		gl.clearColor(0.0, 0.0, 0.0, 0.0);
 		gl.clear(gl.COLOR_BUFFER_BIT);
 		
-		// プログラムオブジェクトの選択
+		// 프로그램 객체 선택
 		gl.useProgram(vPrg);
 		
-		// テクスチャとしてバックバッファをバインド
+		// 텍스처로 백 버퍼를 바인드
 		gl.bindTexture(gl.TEXTURE_2D, backBuffer.t);
 		
-		// テクスチャへ頂点情報をレンダリング
+		// 텍스처로 정점 정보를 렌더링
 		set_attribute(planeVBOList, vAttLocation, vAttStride);
 		gl.uniform2fv(vUniLocation[0], resolution);
 		gl.uniform1i(vUniLocation[1], 0);
@@ -182,28 +182,28 @@ window.onload = function(){
 		gl.uniform1f(vUniLocation[4], velocity);
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, position.length / 3);
 		
-		// パーティクルの色
+		// 파티클의 색
 		count++;
 		ambient = hsva(count % 360, 1.0, 0.8, 1.0);
 		
-		// ブレンドを有効化
+		// 블렌드 활성화
 		gl.enable(gl.BLEND);
 		
-		// ビューポートを設定
+		// 뷰포트 설정
 		gl.viewport(0, 0, c.width, c.height);
 		
-		// フレームバッファのバインドを解除
+		// 프레임 버퍼의 바인드 해제
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 		gl.clearColor(0.0, 0.0, 0.0, 1.0);
 		gl.clear(gl.COLOR_BUFFER_BIT);
 		
-		// プログラムオブジェクトの選択
+		// 프로그램 객체 선택
 		gl.useProgram(pPrg);
 		
-		// フレームバッファをテクスチャとしてバインド
+		// 프레임 버퍼를 텍스처로 하여 바인드
 		gl.bindTexture(gl.TEXTURE_2D, frontBuffer.t);
 		
-		// 頂点を描画
+		//정점을 묘사하다
 		set_attribute(vVBOList, pAttLocation, pAttStride);
 		gl.uniform2fv(pUniLocation[0], resolution);
 		gl.uniform1i(pUniLocation[1], 0);
@@ -211,26 +211,26 @@ window.onload = function(){
 		gl.uniform4fv(pUniLocation[3], ambient);
 		gl.drawArrays(gl.POINTS, 0, vertices.length);
 		
-		// コンテキストの再描画
+		//컨텍스트의 재묘화
 		gl.flush();
 		
-		// 加速度の調整
+		// 가속도의 조정
 		if(mouseFlag){
 			velocity = 1.0;
 		}else{
 			velocity *= 0.95;
 		}
 		
-		// フレームバッファをフリップ
+		// 프레임 버퍼를 플립
 		flip = backBuffer;
 		backBuffer = frontBuffer;
 		frontBuffer = flip;
 		
-		// ループのために再帰呼び出し
+		// 루프를 위해 재귀 호출
 		if(run){requestAnimationFrame(render);}
 	}
 	
-	// イベント処理
+	// 이벤트 처리
 	function mouseDown(eve){
 		mouseFlag = true;
 	}
@@ -249,7 +249,7 @@ window.onload = function(){
 		run = (eve.keyCode !== 27);
 	}
 	
-	// シェーダを生成する関数
+	// 셰이더를 생성하는 함수
 	function create_shader(id){
 		// シェーダを格納する変数
 		var shader;
